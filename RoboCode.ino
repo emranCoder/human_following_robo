@@ -16,10 +16,7 @@ int mode=0;
 #define MAX_DISTANCE 100  
 NewPing sonar(trigger, echo, MAX_DISTANCE);  
 
-
 AF_DCMotor Motor1(1,MOTOR12_1KHZ);  
-AF_DCMotor Motor2(2,MOTOR12_1KHZ);  
-AF_DCMotor Motor3(3,MOTOR34_1KHZ);  
 AF_DCMotor Motor4(4,MOTOR34_1KHZ); 
 
 void setup(){ // put your setup code here, to run once
@@ -47,6 +44,7 @@ if(bt_ir_data > 20){Speed = bt_ir_data;}
 
 else if(bt_ir_data == 9){mode=1; Speed=130;} //Auto Line Follower Command
 else if(bt_ir_data ==10){mode=2; Speed=255;} //Auto Obstacle Avoiding Command
+else if(bt_ir_data ==8){mode=0; Speed=120;} //Manual  Command
 if(mode==0){     
 //===============================================================================
 //                          Key Control Command
@@ -82,6 +80,7 @@ if(mode==1){
   else if((Right_Value==0) && (Left_Value==1)){ turnLeft();} 
   else if((Right_Value==1)&&(Left_Value==0)) { turnRight();} 
   else if((Right_Value==1)&&(Left_Value==1)) { Stop();} 
+  else if((Right_Value==0)&&(Left_Value==0)) { forword();} 
   else if(distance > 1 && distance < 10) { Stop();} 
 
 } 
@@ -89,11 +88,16 @@ if(mode==2){
       
 //===============================================================================
 //                          Obstacle Avoiding Control
-//===============================================================================     
- distance_F = Ultrasonic_read();
+//===============================================================================    
+if(bt_ir_data ==8){mode=0; Speed=120; distance_F = 30;} 
+else
+{
+   distance_F = Ultrasonic_read();
  Serial.print("S=");Serial.println(distance_F);
+ if(bt_ir_data ==8){mode=0; Speed=120; distance_F = 30;} 
   if (distance_F > set){forword();}
     else{Check_side();}
+}
 }
 delay(10);
 }
@@ -151,50 +155,30 @@ void Check_side(){
 void forword(){  //forword
 Motor1.setSpeed(Speed);  
 Motor1.run(FORWARD);  
-Motor2.setSpeed(Speed);  
-Motor2.run(FORWARD);  
-Motor3.setSpeed(Speed);  
-Motor3.run(FORWARD);  
 Motor4.setSpeed(Speed);  
 Motor4.run(FORWARD); 
 }
 void backword(){ //backword
   Motor1.setSpeed(Speed);  
   Motor1.run(BACKWARD);  
-  Motor2.setSpeed(Speed);  
-  Motor2.run(BACKWARD);  
-  Motor3.setSpeed(Speed);  
-  Motor3.run(BACKWARD);  
   Motor4.setSpeed(Speed);  
   Motor4.run(BACKWARD);
 }
 void turnRight(){ //turnRight
   Motor1.setSpeed(100);  
   Motor1.run(BACKWARD);  
-  Motor2.setSpeed(100);  
-  Motor2.run(BACKWARD);  
-  Motor3.setSpeed(200);  
-  Motor3.run(FORWARD);  
   Motor4.setSpeed(200);  
   Motor4.run(FORWARD);  
 }
 void turnLeft(){ //turnLeft
   Motor1.setSpeed(200);  
   Motor1.run(FORWARD);  
-  Motor2.setSpeed(200);  
-  Motor2.run(FORWARD);  
-  Motor3.setSpeed(100);  
-  Motor3.run(BACKWARD);  
   Motor4.setSpeed(100);  
   Motor4.run(BACKWARD); 
 }
 void Stop(){ //stop
   Motor1.setSpeed(0);  
-  Motor1.run(RELEASE);  
-  Motor2.setSpeed(0);  
-  Motor2.run(RELEASE);  
-  Motor3.setSpeed(0);  
-  Motor3.run(RELEASE);  
+  Motor1.run(RELEASE);   
   Motor4.setSpeed(0);  
   Motor4.run(RELEASE);  
 }
