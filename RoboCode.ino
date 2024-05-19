@@ -76,12 +76,12 @@ void loop() {
     else if (bt_ir_data == 6) {
       turnLeft();
       delay(400);
-      speed = 100
+      Speed = 100;
       bt_ir_data = 5;
     } else if (bt_ir_data == 7) {
       turnRight();
       delay(400);
-      speed = 100
+      Speed = 100;
       bt_ir_data = 5;
     }
   }
